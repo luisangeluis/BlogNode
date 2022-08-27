@@ -4,8 +4,9 @@ const passport = require('passport');
 const { verbMiddleware } = require('./middleware/examples/verbs');
 require('./middleware/auth.middleware')(passport);
 //Archivos de rutas
-const usersRouter = require('./users/users.routes').router
-const authRouter = require('./auth/auth.routes').router
+const usersRouter = require('./users/users.routes').router;
+const authRouter = require('./auth/auth.routes').router;
+const postsRouter =require('./posts/posts.routes').router;
 
 const {db} = require('./utils/database');
 //Configuraciones iniciales
@@ -23,6 +24,7 @@ app.get('/', verbMiddleware,(req, res) => {
 
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/posts',postsRouter);
 
 app.get('/ejemplo',
   passport.authenticate('jwt', { session: false }),

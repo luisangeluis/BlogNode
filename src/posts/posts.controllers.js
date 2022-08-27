@@ -1,9 +1,18 @@
 //Dependencies
 const uuid = require('uuid');
 
-const postDB = [];
+const postDB = [
+  {
+    "id": "98ab3d6b-7872-448c-abb2-459c224529b7",
+    "title": "prueba post",
+    "content": "post de prueba",
+    "headerImage": "header",
+    "userId": "d9dbc589-36ff-4773-a77f-f0112834d7f4",
+    "published": true
+  }
+];
 
-const getAllPosts = () => {
+const readAllPosts = () => {
   return postDB;
 }
 
@@ -21,7 +30,7 @@ const createPost = (userId, data) => {
   return newPost;
 }
 
-const getPostById = (id) => {
+const readPostById = (id) => {
   const index = postDB.findIndex(post => post.id === id);
 
   if (index !== -1) {
@@ -31,38 +40,41 @@ const getPostById = (id) => {
   return false;
 }
 
-const getAllMyPost = (userId) => {
+const readAllMyPost = (userId) => {
 
   const data = postDB.filter(post => post.userId === userId);
 
-  if (data.length > 0) {
-    return data;
-  }
+  // if (data.length > 0) {
+  //   return data;
+  // }
+  // return false;
 
-  return false;
+  return data;
 
 }
 
-const getMyPostById= (userId, postId) => {
+const readMyPostById= (userId, postId) => {
   const data = postDB.filter(post => post.userId === userId && post.id === postId);
 
   if (data.length > 0) {
-    return data;
+    return data[0];
   }
 
   return false;
 
 }
 
-const editMyPostById = (userId, postId, data) => {
+const updateMyPostById = (userId, postId, data) => {
 
   const index = postDB.findIndex(post => post.userId === userId && post.id === postId);
 
   if (index !== -1) {
     postDB[index] = {
+      id:postId,
       title: data.title,
       content: data.content,
       headerImage: data.headerImage ? data.headerImage : '',
+      userId,
       published: true
     }
 
@@ -84,12 +96,12 @@ const deleteMyPostById = (userId, postId) => {
 }
 
 module.exports={
-  getAllPosts,
+  readAllPosts,
   createPost,
-  getPostById,
-  getAllMyPost,
-  getMyPostById,
-  editMyPostById,
+  readPostById,
+  readAllMyPost,
+  readMyPostById,
+  updateMyPostById,
   deleteMyPostById
 }
 

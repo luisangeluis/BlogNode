@@ -1,13 +1,10 @@
-const { restart } = require('nodemon');
-const { postsControllers } = require('./posts.controllers');
+const postsControllers = require('./posts.controllers');
 
 const getAll = (req, res) => {
-  const data = postsControllers.getAllPosts();
+  const data = postsControllers.readAllPosts();
 
-  if (data.length > 0)
-    res.status(200).json({ items: data.length, posts: data });
+  res.status(200).json({ items: data.length, posts: data });
 
-  res.status(404).json({ message: 'Not found' })
 }
 
 const makeAPost = (req, res) => {
@@ -33,7 +30,7 @@ const makeAPost = (req, res) => {
 
 const getById = (req, res) => {
   const id = req.params.id;
-  const data = postsControllers.getPostById(id);
+  const data = postsControllers.readPostById(id);
 
   if (data) res.status(200).json(data);
 
@@ -41,21 +38,21 @@ const getById = (req, res) => {
 
 }
 
-const getMyPosts = (req, res) => {
+const getAllMyPosts = (req, res) => {
   const userId = req.user.id;
+  const response = postsControllers.readAllMyPost(userId);
 
-  const response = postsControllers.getAllMyPost(userId);
-
-  if (response) res.status(200).json({ items: response.length, posts: response })
+  // if (response) 
+    res.status(200).json({ items: response.length, posts: response })
 
   // res.status(404).json({message:`Invalid Id`});
 
 }
 
-const getMyPost = (req, res) => {
+const getMyPostById = (req, res) => {
   const userId = req.user.id;
   const postId = req.params.id;
-  const response = postsControllers.getMyPostById(userId, postId);
+  const response = postsControllers.readMyPostById(userId, postId);
 
   if (response) res.status(200).json({ response })
 
@@ -63,7 +60,7 @@ const getMyPost = (req, res) => {
 
 }
 
-const editMyPost = (req, res) => {
+const editMyPostById = (req, res) => {
   const userId = req.user.id;
   const postId = req.params.id;
   const data = req.body;
@@ -72,34 +69,39 @@ const editMyPost = (req, res) => {
 
   if (!data.title || !data.content)
     res.status(400).json({
-      message:'All fields must be completed',
-      fields:{
-        title:'Your title',
-        content:'Your content'
+      message: 'All fields must be completed',
+      fields: {
+        title: 'Your title',
+        content: 'Your content'
       }
     });
-  
-  const response = postsControllers.editMyPostById(userId,postId,data);
+
+  const response = postsControllers.updateMyPostById(userId, postId, data);
 
   res.status(200).json({
-    message:'Post edited succesfully',
+    message: 'Post edited succesfully',
     response
   })
 }
 
-const deletMyPost =(req,res)=>{
+const removeMyPostById = (req, res) => {
   const userId = req.user.id;
   const postId = req.params.id;
+  const response = postsControllers.deleteMyPostById(userId, postId);
 
-  const response =postsControllers.deleteMyPostById(userId,postId);
+  if (response) res.status(204).json();
 
-  if(response) res.status(204).json();
+  res.status(400).json({ message: `The post with id ${postId} doesn't exist` })
 
-  res.status(400).json({message:`The post with id ${postId} doesn't exist`})
-  
 }
 //! Revisar nombres de los servicios http
 
-module.exports={
-
+module.exports = {
+  getAll,
+  makeAPost,
+  getById,
+  getAllMyPosts,
+  getMyPostById,
+  editMyPostById,
+  removeMyPostById
 }
